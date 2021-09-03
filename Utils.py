@@ -9,8 +9,8 @@ class DummyList(list):
         super().__init__(list)
 
     def __contains__(self, o: object) -> bool:
-        if type(o) is list:
-            for x in o:
+        if type(o) is set:
+            for x in self:
                 if x in o: return True
             return False
         return super().__contains__(o)

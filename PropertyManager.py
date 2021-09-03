@@ -1,5 +1,4 @@
-from typing import Dict, List
-from Talent import Talent
+from typing import Dict, Set
 
 class PropertyManager:
     def __init__(self, base):
@@ -16,11 +15,11 @@ class PropertyManager:
         self.total = 20
     
     @property
-    def TLT(self) -> List[int]: # 天赋 talent TLT
+    def TLT(self) -> Set[int]: # 天赋 talent TLT
         return self.base.talent.triggered
 
     @property
-    def EVT(self) -> List[int]:
+    def EVT(self) -> Set[int]:
         return self.base.event.triggered
 
     def apply(self, effect: Dict[str, int]):

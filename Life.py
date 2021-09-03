@@ -35,6 +35,9 @@ class Life:
         self.age: AgeManager = AgeManager(self)
         self.event: EventManager = EventManager(self, self.rnd)
 
+    def prefix(self):
+        return f'[AGE={self.property.AGE}]'
+
     def setErrorHandler(self, handler: Callable[[Exception], None]) -> None:
         '''
         handler recv randomized talents
@@ -65,7 +68,7 @@ class Life:
             self.age.grow()
             for t in self.age.getTalents(): self.talent.addTalent(t)
 
-            result.append(self.talent.updateTalent() + self.event.runEvents(self.age.getEvents()))
+            result.append([self.prefix()] + self.talent.updateTalent() + self.event.runEvents(self.age.getEvents()))
         return result
     
     def choose(self):

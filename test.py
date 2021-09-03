@@ -1,6 +1,6 @@
 from Life import Life
 import traceback
-
+import random
 Life.load('data')
 
 life = Life()
@@ -9,7 +9,7 @@ life.setTalentHandler(lambda ts: ts[0].id)
 def genp(prop):
     ps = []
     for _ in range(4):
-        ps.append(min(prop, 10))
+        ps.append(min(prop, 8))
         prop -= ps[-1]
     return {
         'CHR': ps[0],
