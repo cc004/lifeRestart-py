@@ -19,8 +19,8 @@ class Talent:
         return f'Talent(name={self.name}, desc={self.desc})'
     def checkCondition(self, prop) -> bool:
         return self.cond(prop)
-    def runTalent(self, prop) -> str:
+    def runTalent(self, prop) -> List[str]:
         if self.checkCondition(prop):
             self.apply(prop)
-            return f'天赋【{self.name}】发动：{self.desc}'
-        return None
+            return [f'天赋【{self.name}】发动：{self.desc}']
+        return []

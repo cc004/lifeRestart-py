@@ -1,3 +1,4 @@
+from EventManager import EventManager
 from AgeManager import AgeManager
 from typing import Callable, Dict, List
 from Talent import Talent
@@ -5,10 +6,11 @@ import os
 import json
 from PropertyManager import PropertyManager
 from TalentManager import TalentManager
+import random
 
 class HandlerException(Exception):
     def __init__(self, msg):
-        super.__init__(self, msg)
+        super.__init__(msg)
 
 class Life:
     talent_randomized = 20
@@ -19,14 +21,19 @@ class Life:
             TalentManager.load(json.load(fp))
         with open(os.path.join(datapath, 'age.json'), encoding='utf8') as fp:
             AgeManager.load(json.load(fp))
+        with open(os.path.join(datapath, 'events.json'), encoding='utf8') as fp:
+            EventManager.load(json.load(fp))
 
-    def __init__(self):
+    def __init__(self, rnd=None):
         self._talenthandler: Callable[[List[Talent]], int] = None
         self._propertyhandler: Callable[[int], Dict[str, int]] = None
         self._errorhandler: Callable[[Exception], None] = None
+        self.rnd = rnd or random.Random()
+
         self.property: PropertyManager = PropertyManager(self)
-        self.talent: TalentManager = TalentManager(self)
+        self.talent: TalentManager = TalentManager(self, self.rnd)
         self.age: AgeManager = AgeManager(self)
+        self.event: EventManager = EventManager(self, self.rnd)
 
     def setErrorHandler(self, handler: Callable[[Exception], None]) -> None:
         '''
@@ -49,21 +56,18 @@ class Life:
 
     def alive(self): 
         return self.property.LIF > 0
-    def run(self) -> List[str]:
+    def run(self) -> List[List[str]]:
         '''
         returns: information splited by day
         '''
+        result = []
         while self.alive():
             self.age.grow()
-            evt = self.age.getEvents()
-            tal = self.age.getTalents()
+            for t in self.age.getTalents(): self.talent.addTalent(t)
 
-            for t in tal: self.talent.addTalent(t)
-            
-            res = self.talent.updateTalent()
-            if len(res) > 0:
-                print('\n'.join(res))
-
+            result.append(self.talent.updateTalent() + self.event.runEvents(self.age.getEvents()))
+        return result
+    
     def choose(self):
         talents = self.talent.genTalents(Life.talent_randomized)
         tdict = dict((t.id, t) for t in talents)

@@ -16,12 +16,12 @@ class PropertyManager:
         self.total = 20
     
     @property
-    def TLT(self) -> List[Talent]: # 天赋 talent TLT
-        return self.base.talent.talents
+    def TLT(self) -> List[int]: # 天赋 talent TLT
+        return self.base.talent.triggered
 
     @property
-    def EVT(self) -> List[Talent]:
-        return self.base.talent.talents
+    def EVT(self) -> List[int]:
+        return self.base.event.triggered
 
     def apply(self, effect: Dict[str, int]):
         for key in effect:

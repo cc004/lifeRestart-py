@@ -9,11 +9,16 @@ class DummyList(list):
         super().__init__(list)
 
     def __contains__(self, o: object) -> bool:
-        if o is list:
-            for x in list:
+        if type(o) is list:
+            for x in o:
                 if x in o: return True
             return False
         return super().__contains__(o)
 def parseCondition(cond: str):
-    cond = _regattr.sub(lambda m: f'getattr(x, "{m.group()}")', cond).replace('?[', ' in DummyList([').replace('![', 'not in DummyList([').replace(']', '])')
-    return eval(f'lambda x: {cond}')
+    cond2 = _regattr.sub(lambda m: f'getattr(x, "{m.group()}")', cond).replace('?[', ' in DummyList([').replace('![', 'not in DummyList([').replace(']', '])')
+    while True:
+        try:
+            return eval(f'lambda x: {cond2}')
+        except:
+            print(f'[WARNING] missing ) in {cond}')
+            cond2 += ')'

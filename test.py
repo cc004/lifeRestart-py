@@ -24,4 +24,5 @@ life.choose()
 for t in life.talent.talents:
     print(t)
 
-life.run()
+res = life.run()
+print('\n'.join('\n'.join(x) for x in res))

@@ -1,6 +1,5 @@
 from typing import Dict, List, Set
 from Talent import Talent
-import random
 
 class TalentManager:
     grade_count = 4
@@ -13,11 +12,11 @@ class TalentManager:
             t = Talent(config[k])
             TalentManager._talents[t.grade].append(t)
 
-    def __init__(self, base, rnd=None):
+    def __init__(self, base, rnd):
         self.base = base
         self.talents: List[Talent] = []
         self.triggered: Set[int] = set()
-        self.rnd = rnd or random.Random()
+        self.rnd = rnd
 
     def _genGrades(self):
         rnd = self.rnd.random()
@@ -50,9 +49,9 @@ class TalentManager:
         for t in self.talents:
             if t.id in self.triggered: continue
             r = t.runTalent(self.base.property)
-            if r is not None:
+            if r:
                 self.triggered.add(t.id)
-                result.append(r)
+                result.extend(r)
         return result
 
     def addTalent(self, talent: Talent):
