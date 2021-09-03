@@ -65,7 +65,7 @@ class Life:
             except Exception as e:
                 self._errorhandler(e)
         
-        self.talent.updateTalent()
+        self.talent.updateTalentProp()
         
         while True:
             try:

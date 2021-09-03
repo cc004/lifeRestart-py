@@ -42,6 +42,9 @@ class TalentManager:
             result.extend(self.rnd.sample(TalentManager._talents[grade], k=count))
         return result
 
+    def updateTalentProp(self):
+        self.base.property.total += sum(t.status for t in self.talents)
+
     def updateTalent(self) -> str:
         result = []
         for t in self.talents:

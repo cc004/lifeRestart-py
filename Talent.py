@@ -9,8 +9,7 @@ class Talent:
         self.grade: int = int(json['grade'])
         self._exclusive: List[int] = [int(x) for x in json['exclusive']] if'exclusive' in json else []
         self._effect: Dict[str, int] = json['effect'] if 'effect' in json else {}
-        if 'status' in json:
-            self._effect['status'] = int(json['status'])
+        self.status = int(json['status']) if 'status' in json else 0
         self.cond = parseCondition(json['condition']) if 'condition' in json else lambda _: True
     def isExclusiveWith(self, talent) -> bool:
         return talent.id in self._exclusive or self.id in talent._exclusive
