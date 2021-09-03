@@ -21,4 +21,7 @@ life.setPropertyhandler(genp)
 
 life.choose()
 
+for t in life.talent.talents:
+    print(t)
+
 life.run()

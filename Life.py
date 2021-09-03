@@ -1,3 +1,4 @@
+from AgeManager import AgeManager
 from typing import Callable, Dict, List
 from Talent import Talent
 import os
@@ -16,6 +17,8 @@ class Life:
     def load(datapath):
         with open(os.path.join(datapath, 'talents.json'), encoding='utf8') as fp:
             TalentManager.load(json.load(fp))
+        with open(os.path.join(datapath, 'age.json'), encoding='utf8') as fp:
+            AgeManager.load(json.load(fp))
 
     def __init__(self):
         self._talenthandler: Callable[[List[Talent]], int] = None
@@ -23,6 +26,7 @@ class Life:
         self._errorhandler: Callable[[Exception], None] = None
         self.property: PropertyManager = PropertyManager(self)
         self.talent: TalentManager = TalentManager(self)
+        self.age: AgeManager = AgeManager(self)
 
     def setErrorHandler(self, handler: Callable[[Exception], None]) -> None:
         '''
@@ -43,10 +47,22 @@ class Life:
         '''
         self._propertyhandler = handler
 
+    def alive(self): 
+        return self.property.LIF > 0
     def run(self) -> List[str]:
         '''
         returns: information splited by day
         '''
+        while self.alive():
+            self.age.grow()
+            evt = self.age.getEvents()
+            tal = self.age.getTalents()
+
+            for t in tal: self.talent.addTalent(t)
+            
+            res = self.talent.updateTalent()
+            if len(res) > 0:
+                print('\n'.join(res))
 
     def choose(self):
         talents = self.talent.genTalents(Life.talent_randomized)
@@ -58,7 +74,7 @@ class Life:
                 for t2 in self.talent.talents:
                     if t2.isExclusiveWith(t):
                         raise HandlerException(f'talent chosen conflict with {t2}')
-                self.talent.talents.append(t)
+                self.talent.addTalent(t)
 
                 talents.remove(t)
                 tdict.pop(t.id)

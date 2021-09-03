@@ -45,12 +45,17 @@ class TalentManager:
     def updateTalentProp(self):
         self.base.property.total += sum(t.status for t in self.talents)
 
-    def updateTalent(self) -> str:
+    def updateTalent(self) -> List[str]:
         result = []
         for t in self.talents:
-            if not t.id in self.triggered: continue
+            if t.id in self.triggered: continue
             r = t.runTalent(self.base.property)
             if r is not None:
                 self.triggered.add(t.id)
                 result.append(r)
         return result
+
+    def addTalent(self, talent: Talent):
+        for t in self.talents:
+            if t.id == talent.id: return
+        self.talents.append(talent)

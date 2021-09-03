@@ -16,11 +16,11 @@ class Talent:
     def apply(self, prop) -> None:
         prop.apply(self._effect)
     def __str__(self) -> str:
-        return f'Talent(name={self.name})'
+        return f'Talent(name={self.name}, desc={self.desc})'
     def checkCondition(self, prop) -> bool:
         return self.cond(prop)
     def runTalent(self, prop) -> str:
-        if not self.checkCondition(prop):
+        if self.checkCondition(prop):
             self.apply(prop)
-            return f'天赋【{self.name}】发动：{self.description}'
+            return f'天赋【{self.name}】发动：{self.desc}'
         return None
