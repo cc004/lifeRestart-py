@@ -16,18 +16,16 @@ class Event:
         self._exclude = parseCondition(json['exclude']) if 'exclude' in json else lambda _: False
         self._effect: Dict[str, int] = json['effect'] if 'effect' in json else {}
         self.branch: List[Branch] = [Branch(x) for x in json['branch']] if 'branch' in json else []
-        self.NoRandom = 'NoRandom' in json and json['NoRandom']
-        self.postEvent = json['postEvent'] if 'postEvent' in json else None
-    def apply(self, prop) -> None:
-        prop.apply(self._effect)
+        self._NoRandom = 'NoRandom' in json and json['NoRandom']
+        self._postEvent = json['postEvent'] if 'postEvent' in json else None
     def __str__(self) -> str:
         return f'Event(id={self.id}, name={self.name})'
     def checkCondition(self, prop) -> bool:
-        return not self.NoRandom and self._include(prop) and not self._exclude(prop)
+        return not self._NoRandom and self._include(prop) and not self._exclude(prop)
     def runEvent(self, prop) -> List[str]:
-        self.apply(prop)
+        prop.apply(self._effect)
         for b in self.branch:
             if b.cond(prop):
                 return [self.name] + b.evt.runEvent(prop)
-        if self.postEvent: return [self.name, self.postEvent]
+        if self._postEvent: return [self.name, self._postEvent]
         return [self.name]

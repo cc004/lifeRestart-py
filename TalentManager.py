@@ -13,13 +13,13 @@ class TalentManager:
             TalentManager._talents[t.grade].append(t)
 
     def __init__(self, base, rnd):
-        self.base = base
+        self._base = base
         self.talents: List[Talent] = []
         self.triggered: Set[int] = set()
-        self.rnd = rnd
+        self._rnd = rnd
 
     def _genGrades(self):
-        rnd = self.rnd.random()
+        rnd = self._rnd.random()
         result = TalentManager.grade_count
         while rnd > 0:
             result -= 1
@@ -38,17 +38,17 @@ class TalentManager:
             if count > n:
                 counts[grade - 1] += count - n
                 count = n
-            result.extend(self.rnd.sample(TalentManager._talents[grade], k=count))
+            result.extend(self._rnd.sample(TalentManager._talents[grade], k=count))
         return result
 
     def updateTalentProp(self):
-        self.base.property.total += sum(t.status for t in self.talents)
+        self._base.property.total += sum(t.status for t in self.talents)
 
     def updateTalent(self) -> List[str]:
         result = []
         for t in self.talents:
             if t.id in self.triggered: continue
-            r = t.runTalent(self.base.property)
+            r = t.runTalent(self._base.property)
             if r:
                 self.triggered.add(t.id)
                 result.extend(r)

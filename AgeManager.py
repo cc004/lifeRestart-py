@@ -20,10 +20,10 @@ class AgeManager:
                 AgeManager._ages[a]['event'] = [WeightedEvent(str(x)) for x in AgeManager._ages[a]['event']]
 
     def __init__(self, base):
-        self.base = base
+        self._base = base
 
     def _getnow(self):
-        return AgeManager._ages[str(self.base.property.AGE)]
+        return AgeManager._ages[str(self._base.property.AGE)]
     
     def getEvents(self) -> List[WeightedEvent]:
         now = self._getnow()
@@ -36,4 +36,4 @@ class AgeManager:
         return []
     
     def grow(self):
-        self.base.property.AGE += 1
+        self._base.property.AGE += 1

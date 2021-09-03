@@ -28,14 +28,14 @@ class Life:
         self._talenthandler: Callable[[List[Talent]], int] = None
         self._propertyhandler: Callable[[int], Dict[str, int]] = None
         self._errorhandler: Callable[[Exception], None] = None
-        self.rnd = rnd or random.Random()
+        self._rnd = rnd or random.Random()
 
         self.property: PropertyManager = PropertyManager(self)
-        self.talent: TalentManager = TalentManager(self, self.rnd)
+        self.talent: TalentManager = TalentManager(self, self._rnd)
         self.age: AgeManager = AgeManager(self)
-        self.event: EventManager = EventManager(self, self.rnd)
+        self.event: EventManager = EventManager(self, self._rnd)
 
-    def prefix(self):
+    def _prefix(self):
         return f'[AGE={self.property.AGE}]'
 
     def setErrorHandler(self, handler: Callable[[Exception], None]) -> None:
@@ -57,18 +57,18 @@ class Life:
         '''
         self._propertyhandler = handler
 
-    def alive(self): 
+    def _alive(self): 
         return self.property.LIF > 0
     def run(self) -> List[List[str]]:
         '''
         returns: information splited by day
         '''
         result = []
-        while self.alive():
+        while self._alive():
             self.age.grow()
             for t in self.age.getTalents(): self.talent.addTalent(t)
 
-            result.append([self.prefix()] + self.talent.updateTalent() + self.event.runEvents(self.age.getEvents()))
+            result.append([self._prefix()] + self.talent.updateTalent() + self.event.runEvents(self.age.getEvents()))
         return result
     
     def choose(self):

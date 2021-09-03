@@ -2,7 +2,7 @@ from typing import Dict, Set
 
 class PropertyManager:
     def __init__(self, base):
-        self.base = base
+        self._base = base
         self.CHR = 0 # 颜值 charm CHR
         self.INT = 0 # 智力 intelligence INT
         self.STR = 0 # 体质 strength STR
@@ -16,11 +16,11 @@ class PropertyManager:
     
     @property
     def TLT(self) -> Set[int]: # 天赋 talent TLT
-        return self.base.talent.triggered
+        return self._base.talent.triggered
 
     @property
     def EVT(self) -> Set[int]:
-        return self.base.event.triggered
+        return self._base.event.triggered
 
     def apply(self, effect: Dict[str, int]):
         for key in effect:
