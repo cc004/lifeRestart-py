@@ -10,7 +10,7 @@ import random
 
 class HandlerException(Exception):
     def __init__(self, msg):
-        super.__init__(msg)
+        super().__init__(msg)
 
 class Life:
     talent_randomized = 20

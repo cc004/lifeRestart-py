@@ -5,7 +5,7 @@ Life.load('data')
 
 life = Life()
 life.setErrorHandler(lambda e: traceback.print_exc())
-life.setTalentHandler(lambda ts: ts[0].id)
+life.setTalentHandler(lambda ts: random.choice(ts).id)
 def genp(prop):
     ps = []
     for _ in range(4):
