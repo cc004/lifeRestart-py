@@ -63,13 +63,11 @@ class Life:
         '''
         returns: information splited by day
         '''
-        result = []
         while self._alive():
             self.age.grow()
             for t in self.age.getTalents(): self.talent.addTalent(t)
 
-            result.append([self._prefix()] + self.talent.updateTalent() + self.event.runEvents(self.age.getEvents()))
-        return result
+            yield [self._prefix()] + self.talent.updateTalent() + self.event.runEvents(self.age.getEvents())
     
     def choose(self):
         talents = self.talent.genTalents(Life.talent_randomized)

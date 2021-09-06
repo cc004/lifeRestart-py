@@ -33,7 +33,9 @@ def run():
         print(t)
 
     res = life.run()
-    print('\n'.join('\n'.join(x) for x in res))
+    for x in res:
+        print('\n'.join(x))
 
 while True:
     run()
+    input()
