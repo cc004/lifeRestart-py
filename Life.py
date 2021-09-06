@@ -1,12 +1,13 @@
 from EventManager import EventManager
 from AgeManager import AgeManager
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Iterator
 from Talent import Talent
 import os
 import json
 from PropertyManager import PropertyManager
 from TalentManager import TalentManager
 import random
+import itertools
 
 class HandlerException(Exception):
     def __init__(self, msg):
@@ -35,8 +36,8 @@ class Life:
         self.age: AgeManager = AgeManager(self)
         self.event: EventManager = EventManager(self, self._rnd)
 
-    def _prefix(self):
-        return f'[AGE={self.property.AGE}]'
+    def _prefix(self) -> Iterator[str]:
+        yield f'[AGE={self.property.AGE}]'
 
     def setErrorHandler(self, handler: Callable[[Exception], None]) -> None:
         '''
@@ -59,7 +60,7 @@ class Life:
 
     def _alive(self): 
         return self.property.LIF > 0
-    def run(self) -> List[List[str]]:
+    def run(self) -> Iterator[List[str]]:
         '''
         returns: information splited by day
         '''
@@ -67,10 +68,12 @@ class Life:
             self.age.grow()
             for t in self.age.getTalents(): self.talent.addTalent(t)
 
-            yield [self._prefix()] + self.talent.updateTalent() + self.event.runEvents(self.age.getEvents())
+            yield list(itertools.chain(self._prefix(),
+                self.talent.updateTalent(),
+                self.event.runEvents(self.age.getEvents())))
     
     def choose(self):
-        talents = self.talent.genTalents(Life.talent_randomized)
+        talents = list(self.talent.genTalents(Life.talent_randomized))
         tdict = dict((t.id, t) for t in talents)
 
         while len(self.talent.talents) < Life.talent_choose:

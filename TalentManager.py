@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Iterator
 from Talent import Talent
 
 class TalentManager:
@@ -29,33 +29,29 @@ class TalentManager:
             rnd -= TalentManager.grade_prob[result]
         return result
     
-    def genTalents(self, count: int) -> List[Talent]:
+    def genTalents(self, count: int) -> Iterator[Talent]:
         # should not repeats
         counts = dict([(i, 0) for i in range(TalentManager.grade_count)])
         for _ in range(count):
             counts[self._genGrades()] += 1
-        result = []
         for grade in range(TalentManager.grade_count - 1, -1, -1):
             count = counts[grade]
             n = len(TalentManager._talents[grade])
             if count > n:
                 counts[grade - 1] += count - n
                 count = n
-            result.extend(self._rnd.sample(TalentManager._talents[grade], k=count))
-        return result
+            for talent in self._rnd.sample(TalentManager._talents[grade], k=count):
+                yield talent
 
     def updateTalentProp(self):
         self._base.property.total += sum(t.status for t in self.talents)
 
-    def updateTalent(self) -> List[str]:
-        result = []
+    def updateTalent(self) -> Iterator[str]:
         for t in self.talents:
             if t.id in self.triggered: continue
-            r = t.runTalent(self._base.property)
-            if r:
+            for res in t.runTalent(self._base.property):
                 self.triggered.add(t.id)
-                result.extend(r)
-        return result
+                yield res
 
     def addTalent(self, talent: Talent):
         for t in self.talents:

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, Iterator, List
 from Utils import parseCondition
 
 class Branch:
@@ -22,11 +22,15 @@ class Event:
         return f'Event(id={self.id}, name={self.name})'
     def checkCondition(self, prop) -> bool:
         return not self._NoRandom and self._include(prop) and not self._exclude(prop)
-    def runEvent(self, prop, runner) -> List[str]:
+    def runEvent(self, prop, runner) -> Iterator[str]:
         for b in self.branch:
             if b.cond(prop):
                 prop.apply(self._effect)
-                return [self.name] + runner(b.evt)
+                yield self.name
+                for text in runner(b.evt):
+                    yield text
+                return
         prop.apply(self._effect)
-        if self._postEvent: return [self.name, self._postEvent]
-        return [self.name]
+        yield self.name
+        if self._postEvent:
+            yield self._postEvent
