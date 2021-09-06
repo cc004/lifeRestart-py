@@ -17,8 +17,6 @@ class EventManager:
         self._rnd = rnd
 
     def _randEvent(self, events: List[WeightedEvent]) -> int:
-        if (self._base.property.AGE == 99):
-            print(1)
         events_checked = []
         for ev in events:
             if EventManager._events[ev.evt].checkCondition(self._base.property):
@@ -30,10 +28,10 @@ class EventManager:
             if rnd <= 0: return ev.evt
         return events[0].evt
     
-    def runEvents(self, events: List[WeightedEvent]) -> List[str]:
-        result = []
-        ev = self._randEvent(events)
-        self.triggered.add(ev)
-        result.extend(EventManager._events[ev].runEvent(self._base.property))
+    def _runEvent(self, event: Event) -> List[str]:
+        self.triggered.add(event.id)
+        return event.runEvent(self._base.property, self._runEvent)
 
-        return result
+    def runEvents(self, events: List[WeightedEvent]) -> List[str]:
+        ev = self._randEvent(events)
+        return self._runEvent(EventManager._events[ev])

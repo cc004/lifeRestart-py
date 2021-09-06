@@ -22,10 +22,10 @@ class Event:
         return f'Event(id={self.id}, name={self.name})'
     def checkCondition(self, prop) -> bool:
         return not self._NoRandom and self._include(prop) and not self._exclude(prop)
-    def runEvent(self, prop) -> List[str]:
+    def runEvent(self, prop, runner) -> List[str]:
         prop.apply(self._effect)
         for b in self.branch:
             if b.cond(prop):
-                return [self.name] + b.evt.runEvent(prop)
+                return [self.name] + runner(b.evt)
         if self._postEvent: return [self.name, self._postEvent]
         return [self.name]
