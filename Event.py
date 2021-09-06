@@ -23,9 +23,10 @@ class Event:
     def checkCondition(self, prop) -> bool:
         return not self._NoRandom and self._include(prop) and not self._exclude(prop)
     def runEvent(self, prop, runner) -> List[str]:
-        prop.apply(self._effect)
         for b in self.branch:
             if b.cond(prop):
+                prop.apply(self._effect)
                 return [self.name] + runner(b.evt)
+        prop.apply(self._effect)
         if self._postEvent: return [self.name, self._postEvent]
         return [self.name]
