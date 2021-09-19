@@ -7,8 +7,8 @@ class TalentManager:
 
     @staticmethod
     def load(config):
-        TalentManager._talents: Dict[int, List[Talent]] = dict([(i, []) for i in range(TalentManager.grade_count)])
-        TalentManager.talentDict: Dict[int, Talent] = dict()
+        TalentManager._talents : Dict[int, List[Talent]] = dict([(i, []) for i in range(TalentManager.grade_count)])
+        TalentManager.talentDict : Dict[int, Talent] = dict()
         
         for k in config.keys():
             t = Talent(config[k])
@@ -17,8 +17,8 @@ class TalentManager:
 
     def __init__(self, base, rnd):
         self._base = base
-        self.talents: List[Talent] = []
-        self.triggered: Set[int] = set()
+        self.talents : List[Talent] = []
+        self.triggered : Set[int] = set()
         self._rnd = rnd
 
     def _genGrades(self):
