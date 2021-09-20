@@ -14,8 +14,14 @@ class HandlerException(Exception):
         super().__init__(msg)
 
 class Life:
-    talent_randomized = 20
-    talent_choose = 5
+    talent_inherit = None
+    talent_choose = 3
+    _talent_randomized = 10
+
+    @property
+    def talent_randomized(self):
+        return Life._talent_randomized - 1 if Life.talent_inherit else Life._talent_randomized
+
     @staticmethod
     def load(datapath):
         with open(os.path.join(datapath, 'talents.json'), encoding='utf8') as fp:
@@ -76,14 +82,16 @@ class Life:
             yield list(itertools.chain(self._prefix(), evt_log, tal_log))
     
     def choose(self):
-        talents = list(self.talent.genTalents(Life.talent_randomized))
+        talents = list(self.talent.genTalents(self.talent_randomized))
         tdict = dict((t.id, t) for t in talents)
-
+        if Life.talent_inherit:
+            self.talent.addTalent(Life.talent_inherit)
         while len(self.talent.talents) < Life.talent_choose:
             try:
                 t = tdict[self._talenthandler(talents)]
                 for t2 in self.talent.talents:
                     if t2.isExclusiveWith(t):
+                        continue
                         raise HandlerException(f'talent chosen conflict with {t2}')
                 self.talent.addTalent(t)
 
@@ -99,7 +107,8 @@ class Life:
                 eff = self._propertyhandler(self.property.total)
                 pts = [eff[k] for k in eff]
                 if sum(pts) != self.property.total or max(pts) > 10 or min(pts) < 0:
-                    raise HandlerException(f'property allocation points incorrect:{self.property.total}{pts}')
+                    if 0 < self.property.total:
+                        raise HandlerException(f'property allocation points incorrect:{self.property.total}{pts}')
                 self.property.apply(eff)
                 break
             except Exception as e:

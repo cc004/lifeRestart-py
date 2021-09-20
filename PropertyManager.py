@@ -1,6 +1,9 @@
 from typing import Dict, Set
 
 class PropertyManager:
+    TMS = 0
+    AVT = []
+
     def __init__(self, base):
         self._base = base
         self.CHR = 0 # 颜值 charm CHR
@@ -14,8 +17,7 @@ class PropertyManager:
         
         self.total = 20
 
-        self.TMS = 0
-        self.AVT = []
+        PropertyManager.TMS+=1
     
     @property
     def TLT(self) -> Set[int]: # 天赋 talent TLT
