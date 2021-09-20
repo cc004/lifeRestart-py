@@ -13,6 +13,9 @@ class PropertyManager:
         self.LIF = 1 # hp
         
         self.total = 20
+
+        self.TMS = 0
+        self.AVT = []
     
     @property
     def TLT(self) -> Set[int]: # 天赋 talent TLT
@@ -24,4 +27,8 @@ class PropertyManager:
 
     def apply(self, effect: Dict[str, int]):
         for key in effect:
+            if key == "RDM":
+                k = ['CHR','INT','STR','MNY','SPR'][id(key) % 5]
+                setattr(self, k, getattr(self, k) + effect[key])
+                continue
             setattr(self, key, getattr(self, key) + effect[key])

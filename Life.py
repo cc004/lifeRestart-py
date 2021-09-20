@@ -24,20 +24,22 @@ class Life:
             AgeManager.load(json.load(fp))
         with open(os.path.join(datapath, 'events.json'), encoding='utf8') as fp:
             EventManager.load(json.load(fp))
+        #with open(os.path.join(datapath, 'achievement.json'), encoding='utf8') as fp:
+        #    EventManager.load(json.load(fp))
 
     def __init__(self, rnd=None):
-        self._talenthandler: Callable[[List[Talent]], int] = None
-        self._propertyhandler: Callable[[int], Dict[str, int]] = None
-        self._errorhandler: Callable[[Exception], None] = None
+        self._talenthandler : Callable[[List[Talent]], int] = None
+        self._propertyhandler : Callable[[int], Dict[str, int]] = None
+        self._errorhandler : Callable[[Exception], None] = None
         self._rnd = rnd or random.Random()
 
-        self.property: PropertyManager = PropertyManager(self)
-        self.talent: TalentManager = TalentManager(self, self._rnd)
-        self.age: AgeManager = AgeManager(self)
-        self.event: EventManager = EventManager(self, self._rnd)
+        self.property : PropertyManager = PropertyManager(self)
+        self.talent : TalentManager = TalentManager(self, self._rnd)
+        self.age : AgeManager = AgeManager(self)
+        self.event : EventManager = EventManager(self, self._rnd)
 
     def _prefix(self) -> Iterator[str]:
-        yield f'[AGE={self.property.AGE}]'
+        yield f'【{self.property.AGE}岁/颜{self.property.CHR}智{self.property.INT}体{self.property.STR}钱{self.property.MNY}乐{self.property.SPR}】'
 
     def setErrorHandler(self, handler: Callable[[Exception], None]) -> None:
         '''
@@ -67,10 +69,11 @@ class Life:
         while self._alive():
             self.age.grow()
             for t in self.age.getTalents(): self.talent.addTalent(t)
+            
+            tal_log = self.talent.updateTalent()
+            evt_log = self.event.runEvents(self.age.getEvents())
 
-            yield list(itertools.chain(self._prefix(),
-                self.talent.updateTalent(),
-                self.event.runEvents(self.age.getEvents())))
+            yield list(itertools.chain(self._prefix(), evt_log, tal_log))
     
     def choose(self):
         talents = list(self.talent.genTalents(Life.talent_randomized))
@@ -96,10 +99,9 @@ class Life:
                 eff = self._propertyhandler(self.property.total)
                 pts = [eff[k] for k in eff]
                 if sum(pts) != self.property.total or max(pts) > 10 or min(pts) < 0:
-                    raise HandlerException(f'property allocation points incorrect')
+                    raise HandlerException(f'property allocation points incorrect:{self.property.total}{pts}')
                 self.property.apply(eff)
                 break
             except Exception as e:
                 self._errorhandler(e)
-
 
