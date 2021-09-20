@@ -21,9 +21,6 @@ class Life:
     def _talent_randomized(self):
         return Life._talent_finalist - 1 if self._talent_inherit else Life._talent_finalist
 
-    def is_inherited(self):
-        return self._talent_inherit is not None
-
     def tally(self):
         return self.property.TMS
 
@@ -100,7 +97,7 @@ class Life:
     def choose(self):
         talents = list(self.talent.genTalents(self._talent_randomized))
         tdict = dict((t.id, t) for t in talents)
-        if self.is_inherited():
+        if self._talent_inherit is not None:
             self.talent.addTalent(self._talent_inherit)
         while len(self.talent.talents) < Life._talent_choose:
             try:
@@ -122,7 +119,7 @@ class Life:
             try:
                 eff = self._propertyhandler(self.property.total)
                 pts = [eff[k] for k in eff]
-                if 0 < self.property.total and sum(pts) != self.property.total or max(pts) > 10 or min(pts) < 0:
+                if sum(pts) != max(self.property.total,0) or max(pts) > 10 or min(pts) < 0:
                     raise HandlerException(f'property allocation points incorrect:{self.property.total}{pts}')
                 self.property.apply(eff)
                 break
