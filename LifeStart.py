@@ -2,10 +2,7 @@ import random
 import traceback
 import msvcrt
 
-from Talent import Talent
 from Life import Life
-from TalentManager import TalentManager
-from PropertyManager import PropertyManager
 
 Life.load('data')
 
@@ -29,21 +26,22 @@ def genp(prop):
         'MNY': prop
     }
 
-life = None
+life = Life()
 
 def run():
-    global life
-    life = Life()
     life.setErrorHandler(lambda e: traceback.print_exc())
     life.setTalentHandler(lambda ts: random.choice(ts).id)
     life.setPropertyhandler(genp)
     
+    #from TalentManager import TalentManager
     #life.talent.talents.append(TalentManager.talentDict[1122])
+    
     life.choose()
     
-    print(f'\n【第{PropertyManager.TMS}轮开始】获得以下天赋：')
+    print(f'\n【第{life.tally()}轮开始】获得以下天赋：')
     for t in life.talent.talents:
         print(t)
+    print(life.property)
 
     return life.run()
 
@@ -56,13 +54,19 @@ while True:
             continue
         if(msvcrt.getch() == b' '):
             i = 9
-    print(f"\n\n【第{PropertyManager.TMS}轮结束】你可以从本轮天赋中选择一项继承到下一轮：")
+    print(f"\n\n【第{life.tally()}轮结束】你可以从本轮天赋中选择一项继承到下一轮：\n0 放弃继承")
     i = 1
     for t in life.talent.talents:
-        print(f"{i} {t}")
+        print(f"{i}.{t}")
         i+=1
-    c = input("请输入希望继承的天赋序号（直接按回车将跳过）：")
-    try:
-        Life.talent_inherit = life.talent.talents[int(c) - 1]
-    except:
+    c = input("请输入希望继承的天赋序号（默认选择1）：")
+    if c == 0:
         print('没有继承任何天赋……')
+        life.restart()
+    inherit = 1
+    try:
+        inherit = int(c)
+    except:
+        pass
+    print(f'你的选择是：{inherit}')
+    life.restart(inherit)
