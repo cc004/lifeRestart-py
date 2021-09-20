@@ -6,14 +6,14 @@ class EventManager:
 
     @staticmethod
     def load(config):
-        EventManager._events: Dict[int, Event] = dict((int(k), Event(config[k]))for k in config)
+        EventManager._events : Dict[int, Event] = {int(k):Event(config[k]) for k in config}
         for k in EventManager._events:
             for b in EventManager._events[k].branch:
                 b.evt = EventManager._events[b.id]
 
     def __init__(self, base, rnd):
         self._base = base
-        self.triggered: Set[int] = set()
+        self.triggered : Set[int] = set()
         self._rnd = rnd
 
     def _randEvent(self, events: List[WeightedEvent]) -> int:

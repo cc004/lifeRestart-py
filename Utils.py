@@ -15,10 +15,12 @@ class DummyList(list):
             return False
         return super().__contains__(o)
 def parseCondition(cond: str):
-    cond2 = _regattr.sub(lambda m: f'getattr(x, "{m.group()}")', cond).replace('?[', ' in DummyList([').replace('![', 'not in DummyList([').replace(']', '])')
+    cond2 = _regattr.sub(lambda m: f'getattr(x, "{m.group()}")', cond.replace('AEVT','AVT')).replace('?[', ' in DummyList([').replace('![', 'not in DummyList([').replace(']', '])').replace('|',' or ')
     while True:
         try:
-            return eval(f'lambda x: {cond2}')
+            func = eval(f'lambda x: {cond2}')
+            func.__doc__ = cond2
+            return func
         except:
             print(f'[WARNING] missing ) in {cond}')
             cond2 += ')'
