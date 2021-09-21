@@ -2,7 +2,7 @@ import random
 import traceback
 import msvcrt
 
-from Life import Life
+from Life import Life,HandlerException
 
 Life.load('data')
 
@@ -28,9 +28,28 @@ def genp(prop):
 
 life = Life()
 
+def on_error(e):
+    raise e
+
+def pick_talent(ts):
+    print('\n【选择天赋】')
+    print('\n'.join([f'{i+1}.{t}' for i,t in enumerate(ts)]))
+    while True:
+        s = input('从中挑选一个你想拥有的天赋并输入序号（默认选择1）：')
+        if s == '':
+            return ts[0].id
+        try:
+            t = ts[int(s) - 1]
+            print(f'你选择了：{t}')
+            return t.id
+        except HandlerException as e:
+            print(e)
+        except Exception as e:
+            print('无法识别，请重新选择')
+
 def run():
-    life.setErrorHandler(lambda e: traceback.print_exc())
-    life.setTalentHandler(lambda ts: random.choice(ts).id)
+    life.setErrorHandler(on_error)
+    life.setTalentHandler(pick_talent)
     life.setPropertyhandler(genp)
     
     #from TalentManager import TalentManager
@@ -55,10 +74,8 @@ while True:
         if(msvcrt.getch() == b' '):
             i = 9
     print(f"\n\n【第{life.tally()}轮结束】你可以从本轮天赋中选择一项继承到下一轮：\n0 放弃继承")
-    i = 1
-    for t in life.talent.talents:
-        print(f"{i}.{t}")
-        i+=1
+    print('\n'.join([f"{i+1}.{t}" for i,t in enumerate(life.talent.talents)]))
+
     c = input("请输入希望继承的天赋序号（默认选择1）：")
     if c == 0:
         print('没有继承任何天赋……')

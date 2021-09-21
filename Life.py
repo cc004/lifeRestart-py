@@ -96,16 +96,15 @@ class Life:
     
     def choose(self):
         talents = list(self.talent.genTalents(self._talent_randomized))
-        tdict = dict((t.id, t) for t in talents)
         if self._talent_inherit is not None:
-            self.talent.addTalent(self._talent_inherit)
+            talents.insert(0,self._talent_inherit)
+        tdict = dict((t.id, t) for t in talents)
         while len(self.talent.talents) < Life._talent_choose:
             try:
                 t = tdict[self._talenthandler(talents)]
                 for t2 in self.talent.talents:
                     if t2.isExclusiveWith(t):
-                        continue
-                        raise HandlerException(f'talent chosen conflict with {t2}')
+                        raise HandlerException(f'你选择的天赋和{t2}不能同时拥有')
                 self.talent.addTalent(t)
 
                 talents.remove(t)
