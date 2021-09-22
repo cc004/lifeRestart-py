@@ -57,7 +57,7 @@ def run():
     
     life.choose()
     
-    print(f'\n【第{life.tally()}轮开始】获得以下天赋：')
+    print(f'\n【第{life.property.TMS}轮开始】获得以下天赋：')
     for t in life.talent.talents:
         print(t)
     print(life.property)
@@ -73,7 +73,7 @@ while True:
             continue
         if(msvcrt.getch() == b' '):
             i = 9
-    print(f"\n\n【第{life.tally()}轮结束】你可以从本轮天赋中选择一项继承到下一轮：\n0 放弃继承")
+    print(f"\n\n【第{life.property.TMS}轮结束】你可以从本轮天赋中选择一项继承到下一轮：\n0 放弃继承")
     print('\n'.join([f"{i+1}.{t}" for i,t in enumerate(life.talent.talents)]))
 
     c = input("请输入希望继承的天赋序号（默认选择1）：")

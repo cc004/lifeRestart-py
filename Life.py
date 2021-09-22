@@ -21,9 +21,6 @@ class Life:
     def _talent_randomized(self):
         return Life._talent_finalist - 1 if self._talent_inherit else Life._talent_finalist
 
-    def tally(self):
-        return self.property.TMS
-
     @staticmethod
     def load(datapath):
         with open(os.path.join(datapath, 'talents.json'), encoding='utf8') as fp:
